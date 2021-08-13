@@ -11,7 +11,7 @@ function getRandName () {
 }
 
 
-function gen(pw) {
+function gen(pw,email) {
     return fetch("https://members.hanime.tv/rapi/v7/users", {
         "credentials": "omit",
         "headers": {
@@ -26,7 +26,7 @@ function gen(pw) {
             "Pragma": "no-cache",
             "Cache-Control": "no-cache"
         },
-        "body": `{\"username\":\"${getRandName()}\",\"email\":\"${getRandName()}@gmail.com\",\"password\":\"${pw}\",\"screen_width\":${rand(3000,100)},\"screen_height\":${rand(3000,100)}}`,
+        "body": `{\"username\":\"${getRandName()}\",\"email\":\"${email}\",\"password\":\"${pw}\",\"screen_width\":${rand(3000,100)},\"screen_height\":${rand(3000,100)}}`,
         "method": "POST",
         "mode": "cors"
     })
@@ -39,7 +39,8 @@ if (cluster.isWorker) {
         switch (msg) {
             case "work":
 		let pw = getRandName()
-                gen(pw).then(resp=>resp.json().then(jsn=>process.send?.( jsn?.user?.id ? `new account ? ${jsn?.user?.id} - ${jsn?.user?.name} | ${pw}` : JSON.stringify(jsn))))
+		let em = `${getRandName()}@gmail.com`
+                gen(pw,em).then(resp=>resp.json().then(jsn=>process.send?.( jsn?.user?.id ? `new account ? ${jsn?.user?.id} - ${jsn?.user?.name} @ ${em} | ${pw}` : JSON.stringify(jsn))))
         }
     })
 
